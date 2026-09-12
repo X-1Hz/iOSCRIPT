@@ -1,17 +1,22 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/X-1Hz/iOSCRIPT/refs/heads/main/gamelist.lua"))()
-local gameFound = false
-for PlaceID, Execute in pairs(Games) do
-    if PlaceID == game.PlaceId then
-        gameFound = true
-        loadstring(game:HttpGet(Execute))()
-        break
-    end
-end
+-- 1. ตรวจสอบ PlaceId (Game ID) ของผู้เล่นปัจจุบัน
+local currentGameId = game.PlaceId
 
-if not gameFound then
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "By iOSCRIPT",
-        Text = "We’re sorry, but this game is not supported. Please check our Discord for a list of supported games",
-        Duration = 10
-    })
+-- 2. รายชื่อแมพที่รองรับและลิงก์ไฟล์โค้ดจริง (ลิงก์ Raw จาก GitHub)
+local gameScripts = {
+    [106484206883664] = "https://raw.githubusercontent.com/ชื่อยูสเซอร์ของคุณ/ชื่อเรโป/main/games/game_1.lua", -- เปลี่ยนเป็น ID และลิงก์จริงของแมพที่ 1
+}
+
+-- 3. ทำการโหลดสคริปต์เฉพาะแมพที่ตรงกัน
+local targetScriptUrl = gameScripts[currentGameId]
+
+if targetScriptUrl then
+    local success, err = pcall(function()
+        loadstring(game:HttpGet(targetScriptUrl))()
+    end)
+    
+    if not success then
+        warn("เกิดข้อผิดพลาดในการโหลดสคริปต์: " .. tostring(err))
+    end
+else
+    warn("สคริปต์นี้ไม่รองรับเกมที่คุณกำลังเล่นอยู่!")
 end
